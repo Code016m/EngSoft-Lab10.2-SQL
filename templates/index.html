@@ -3,115 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Livraria - Catálogo</title>
+    <title>Livraria</title>
 
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            margin: 40px;
-        }
-
-        h1 {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f5f5f5;
             color: #333;
         }
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
+        h1, h2 {
+            color: #333;
         }
 
-        input, button {
-            padding: 10px;
-            margin: 5px 0;
+        section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
         }
 
         input {
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         button {
+            padding: 10px 18px;
             background: #333;
             color: white;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
+            border-radius: 4px;
         }
 
-        .livro {
-            padding: 12px;
+        .livro, .usuario {
             border-bottom: 1px solid #ddd;
+            padding: 12px 0;
         }
 
         .mensagem {
             padding: 10px;
-            margin: 10px 0;
-            background: #e8f5e9;
+            margin-bottom: 10px;
+            background: #e8e8e8;
+            border-radius: 4px;
         }
 
         .erro {
-            background: #ffebee;
-            padding: 10px;
+            background: #ffdede;
+        }
+
+        .sucesso {
+            background: #dff5df;
         }
     </style>
 </head>
 
 <body>
-<div class="container">
 
     <h1>Livraria</h1>
-    <p>Catálogo de livros com Azure Cosmos DB for MongoDB</p>
+    <p>Catálogo de livros e cadastro de usuários</p>
 
     {% with mensagens = get_flashed_messages(with_categories=true) %}
         {% for categoria, mensagem in mensagens %}
-            <p class="mensagem">{{ mensagem }}</p>
+            <div class="mensagem {{ categoria }}">
+                {{ mensagem }}
+            </div>
         {% endfor %}
     {% endwith %}
 
-    {% if erro %}
-        <p class="erro">{{ erro }}</p>
-    {% endif %}
+    <section>
+        <h2>Pesquisar livros</h2>
 
-    <h2>Pesquisar livros</h2>
+        <form method="GET" action="/">
+            <input
+                type="text"
+                name="busca"
+                placeholder="Digite título, autor ou gênero"
+                value="{{ termo }}"
+            >
 
-    <form method="GET">
-        <input
-            type="text"
-            name="busca"
-            placeholder="Título, autor ou gênero"
-            value="{{ busca }}"
-        >
-        <button type="submit">Pesquisar</button>
-        <a href="/">Limpar</a>
-    </form>
+            <button type="submit">Pesquisar</button>
+            <a href="/">Limpar</a>
+        </form>
+    </section>
 
-    <h2>Cadastrar livro</h2>
+    <section>
+        <h2>Cadastrar livro</h2>
 
-    <form action="/cadastrar" method="POST">
-        <input type="text" name="titulo" placeholder="Título" required>
-        <input type="text" name="autor" placeholder="Autor" required>
-        <input type="text" name="genero" placeholder="Gênero" required>
-        <input type="number" name="ano" placeholder="Ano" required>
-        <button type="submit">Cadastrar</button>
-    </form>
+        <form method="POST" action="/cadastrar">
+            <input type="text" name="titulo" placeholder="Título" required>
+            <input type="text" name="autor" placeholder="Autor" required>
+            <input type="text" name="genero" placeholder="Gênero" required>
+            <input type="number" name="ano" placeholder="Ano" required>
 
-    <h2>Catálogo de livros ({{ livros|length }})</h2>
+            <button type="submit">Cadastrar livro</button>
+        </form>
+    </section>
 
-    {% for livro in livros %}
-        <div class="livro">
-            <strong>{{ livro.titulo }}</strong><br>
-            Autor: {{ livro.autor }}<br>
-            Gênero: {{ livro.genero }}<br>
-            Ano: {{ livro.ano }}
-        </div>
-    {% else %}
-        <p>Nenhum livro encontrado.</p>
-    {% endfor %}
+    <section>
+        <h2>Catálogo de livros ({{ livros|length }})</h2>
 
-</div>
+        {% for livro in livros %}
+            <div class="livro">
+                <strong>{{ livro.titulo }}</strong><br>
+                Autor: {{ livro.autor }}<br>
+                Gênero: {{ livro.genero }}<br>
+                Ano: {{ livro.ano }}
+            </div>
+        {% else %}
+            <p>Nenhum livro encontrado.</p>
+        {% endfor %}
+    </section>
+
+    <section>
+        <h2>Cadastrar usuário</h2>
+
+        <form method="POST" action="/usuarios/cadastrar">
+            <input type="text" name="nome" placeholder="Nome completo" required>
+            <input type="email" name="email" placeholder="E-mail" required>
+
+            <button type="submit">Cadastrar usuário</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Usuários cadastrados ({{ usuarios|length }})</h2>
+
+        {% for usuario in usuarios %}
+            <div class="usuario">
+                <strong>{{ usuario.nome }}</strong><br>
+                ID: {{ usuario.id }}<br>
+                E-mail: {{ usuario.email }}
+            </div>
+        {% else %}
+            <p>Nenhum usuário cadastrado.</p>
+        {% endfor %}
+    </section>
+
 </body>
 </html>

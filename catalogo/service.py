@@ -1,26 +1,32 @@
 from catalogo import repository
 
-def obter_livros(termo=None):
-    if termo:
-        return repository.buscar_livros(termo)
+def listar_livros():
     return repository.listar_livros()
 
-def adicionar_livro(titulo, autor, genero, ano):
-    if not titulo.strip() or not autor.strip() or not genero.strip() or not ano:
-        raise ValueError("Preencha todos os campos.")
+def buscar_livros(termo):
+    return repository.buscar_livros(termo.strip())
+
+def cadastrar_livro(titulo, autor, genero, ano):
+    titulo = titulo.strip()
+    autor = autor.strip()
+    genero = genero.strip()
+
+    if not titulo or not autor or not genero or not ano:
+        raise ValueError("Preencha todos os campos do livro.")
+
     try:
         ano = int(ano)
-        if ano <= 0:
-            raise ValueError
     except ValueError:
-        raise ValueError("Informe um ano válido.")
+        raise ValueError("O ano deve ser um número inteiro.")
+
+    if ano <= 0:
+        raise ValueError("O ano deve ser maior que zero.")
+
     livro = {
-        "titulo": titulo.strip(),
-        "autor": autor.strip(),
-        "genero": genero.strip(),
+        "titulo": titulo,
+        "autor": autor,
+        "genero": genero,
         "ano": ano
     }
-    return repository.cadastrar_livro(livro)
 
-def preparar_catalogo():
-    repository.inicializar_livros()
+    repository.cadastrar_livro(livro)
